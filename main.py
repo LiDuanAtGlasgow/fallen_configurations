@@ -10,6 +10,8 @@ from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import Dataset
 import pandas as pd
 import cv2
+import os
+import time
 
 class Dataset_(Dataset):
     def __init__(self,csv_path,image_address,transform):
@@ -18,14 +20,14 @@ class Dataset_(Dataset):
         self.transform=transform
     
     def __getitem__(self,index):
-        image=cv2.imread(self.path+self.data_csv.iloc[index,0])
-        label=self.data_csv[index,1]
+        image=cv2.imread(self.path+self.data_csv.iloc[index,0],0)
+        label=self.data_csv.iloc[index,1]
         if self.transform is not None:
             image=self.transform(image)
         return image,label
     
     def __len__(self):
-        return len(self)
+        return len(self.data_csv)
 
 class Net(nn.Module):
     def __init__(self):
@@ -34,8 +36,8 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.fc1 = nn.Linear(64*126*126, 128)
+        self.fc2 = nn.Linear(128, 27)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -94,8 +96,8 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
+    parser.add_argument('--test-batch-size', type=int, default=64, metavar='N',
+                        help='input batch size for testing (default: 64)')
     parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
@@ -131,14 +133,14 @@ def main():
 
     transform=transforms.Compose([
         transforms.ToTensor(),
-        transforms.ReSize((256,256)),
+        transforms.Resize((256,256)),
         transforms.Normalize((0.43177274,), (0.3802147,))
         ])
     image_address='./Database/'+args.image_format+'/'
     train_csv='./train.csv'
     val_csv='./val.csv'
-    train_dataset=Dataset_(csv_path=train_csv,image_address=image_address,transform=transforms)
-    val_dataset=Dataset_(csv_path=val_csv,image_address=image_address,transform=transforms)
+    train_dataset=Dataset_(csv_path=train_csv,image_address=image_address,transform=transform)
+    val_dataset=Dataset_(csv_path=val_csv,image_address=image_address,transform=transform)
 
     train_loader = torch.utils.data.DataLoader(train_dataset,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(val_dataset, **test_kwargs)
@@ -151,11 +153,12 @@ def main():
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, test_loader)
         scheduler.step()
-
-    if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
+    
+    model_file='./Model/'
+    if not os.path.exists(model_file):
+        os.makedirs(model_file)
+    torch.save(model.state_dict(), "./Model/FCNet_%f.pt"%time.time())
 
 
 if __name__ == '__main__':
     main()
-
