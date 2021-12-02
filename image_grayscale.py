@@ -1,4 +1,6 @@
 #type:ignore
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import os
 import cv2
 import pandas as pd

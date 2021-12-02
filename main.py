@@ -9,9 +9,11 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import Dataset
 import pandas as pd
-import cv2
 import os
 import time
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+import cv2
 
 class Dataset_(Dataset):
     def __init__(self,csv_path,image_address,transform):
@@ -37,7 +39,7 @@ class Net(nn.Module):
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
         self.fc1 = nn.Linear(64*126*126, 128)
-        self.fc2 = nn.Linear(128, 27)
+        self.fc2 = nn.Linear(128, 5)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -114,7 +116,7 @@ def main():
                         help='how many batches to wait before logging training status')
     parser.add_argument('--save-model', action='store_true', default=False,
                         help='For Saving the current Model')
-    parser.add_argument('--image_format',type=str,default='RGB_GRAYSCALE',help='image format')
+    parser.add_argument('--image_format',type=str,default='depth',help='image format')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -134,7 +136,7 @@ def main():
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize((256,256)),
-        transforms.Normalize((0.43177274,), (0.3802147,))
+        transforms.Normalize((0.01183898,), (0.05419697,))
         ])
     image_address='./Database/'+args.image_format+'/'
     train_csv='./train.csv'
@@ -157,7 +159,7 @@ def main():
     model_file='./Model/'
     if not os.path.exists(model_file):
         os.makedirs(model_file)
-    torch.save(model.state_dict(), "./Model/FCNet_%f.pt"%time.time())
+    torch.save(model.state_dict(), "./Model/KCNet_%f.pt"%time.time())
 
 
 if __name__ == '__main__':
