@@ -62,14 +62,14 @@ def test(kcnet,data):
     print('predicted_label:',pred.item())
     return pred
 
-images_add='./test_images/pos_0004_test/depth/0001.png'
+images_add='./test_images/pos_test_0001/depth/0001.png'
 images=cv2.imread(images_add,0)
 transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize((256,256)),
         transforms.Normalize((0.01183898,), (0.05419697,))
         ])
-data=Get_Images(image=images_add,transforms=transform).__getitem__()
+data=Get_Images(image=images,transforms=transform).__getitem__()
 kcnet=KCNet()
 kcnet.load_state_dict(torch.load('./Model/KCNet.pt'))
 kcnet.eval()
