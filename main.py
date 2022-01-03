@@ -9,9 +9,11 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import Dataset
 import pandas as pd
-import cv2
 import os
 import time
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+import cv2
 
 class Dataset_(Dataset):
     def __init__(self,csv_path,image_address,transform):
@@ -157,7 +159,7 @@ def main():
     model_file='./Model/'
     if not os.path.exists(model_file):
         os.makedirs(model_file)
-    torch.save(model.state_dict(), "./Model/FCNet_%f.pt"%time.time())
+    torch.save(model.state_dict(), "./Model/KCNet_%f.pt"%time.time())
 
 
 if __name__ == '__main__':

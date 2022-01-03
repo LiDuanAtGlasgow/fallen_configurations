@@ -1,5 +1,7 @@
 # type: ignore
 import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+import sys
 import numpy as np
 import os
 import cv2

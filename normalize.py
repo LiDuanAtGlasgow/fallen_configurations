@@ -1,4 +1,6 @@
 #type:ignore
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 from torch.utils.data import Dataset,DataLoader,SequentialSampler
 import cv2
 from PIL import Image
