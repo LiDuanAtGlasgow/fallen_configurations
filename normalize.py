@@ -32,7 +32,7 @@ transform=transforms.Compose([
     transforms.ToTensor()
 ])
 batch_size=100
-dataset=ImageDataset('./labels.csv','./Database/RGB_GRAYSCALE/',transform=transform)
+dataset=ImageDataset('./labels.csv','./Database/depth/',transform=transform)
 sampler=SequentialSampler(list(range(len(dataset))))
 kwargs={'num_workers':4,'pin_memory':True} if cuda else {}
 dataloader=DataLoader(dataset=dataset,batch_size=batch_size,sampler=sampler,**kwargs)
@@ -49,8 +49,8 @@ for idx,data in enumerate(dataloader):
     pop_mean.append(batch_mean)
     pop_std0.append(batch_std0)
     pop_std1.append(batch_std1)
-    if idx%(int(len(dataloader)/10))==0:
-        print(f'Batch: {idx}/{len(dataloader)} Time passed: {time.time()-start_time}')
+    #if idx%(int(len(dataloader)/10))==0:
+    #    print(f'Batch: {idx}/{len(dataloader)} Time passed: {time.time()-start_time}')
 pop_mean=np.array(pop_mean).mean(axis=0)
 pop_std0=np.array(pop_std0).mean(axis=0)
 pop_std1=np.array(pop_std1).mean(axis=0)
