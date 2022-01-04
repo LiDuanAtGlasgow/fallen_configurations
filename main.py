@@ -11,8 +11,6 @@ from torch.utils.data import Dataset
 import pandas as pd
 import os
 import time
-import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 
 class Dataset_(Dataset):
@@ -39,7 +37,7 @@ class Net(nn.Module):
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
         self.fc1 = nn.Linear(64*126*126, 128)
-        self.fc2 = nn.Linear(128, 5)
+        self.fc2 = nn.Linear(128, 10)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -88,7 +86,7 @@ def test(model, device, test_loader):
 
     test_loss /= len(test_loader.dataset)
 
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    print('\nValidate set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
@@ -136,16 +134,19 @@ def main():
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize((256,256)),
-        transforms.Normalize((0.01183898,), (0.05419697,))
+        transforms.Normalize((0.01302305,), (0.05548602,))
         ])
     image_address='./Database/'+args.image_format+'/'
     train_csv='./train.csv'
     val_csv='./val.csv'
+    test_csv='./test.csv'
     train_dataset=Dataset_(csv_path=train_csv,image_address=image_address,transform=transform)
     val_dataset=Dataset_(csv_path=val_csv,image_address=image_address,transform=transform)
+    test_dataset=Dataset_(csv_path=test_csv,image_address=image_address,transform=transform)
 
     train_loader = torch.utils.data.DataLoader(train_dataset,**train_kwargs)
-    test_loader = torch.utils.data.DataLoader(val_dataset, **test_kwargs)
+    val_loader = torch.utils.data.DataLoader(val_dataset, **test_kwargs)
+    test_loader=torch.utils.data.DataLoader(test_dataset, **test_kwargs)
 
     model = Net().to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
@@ -153,8 +154,9 @@ def main():
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
-        test(model, device, test_loader)
+        test(model, device, val_loader)
         scheduler.step()
+    test(model,device=device,test_loader=test_loader)
     
     model_file='./Model/'
     if not os.path.exists(model_file):
