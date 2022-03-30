@@ -1,0 +1,9 @@
+Towel, Tshirt, Shirt, Sweater and Jean Merging:
+
+Validate set: Average loss: 0.1092, Accuracy: 2816/2888 (98%)
+Validate set: Average loss: 0.7766, Accuracy: 4204/4829 (87%)
+
+Jean:
+
+Validate set: Average loss: 0.0229, Accuracy: 550/555 (99%)
+Validate set: Average loss: 0.0425, Accuracy: 964/976 (99%)

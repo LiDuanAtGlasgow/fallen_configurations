@@ -1,6 +1,7 @@
 #type:ignore
 from __future__ import print_function
 import argparse
+from pickletools import optimize
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,6 +13,8 @@ import pandas as pd
 import os
 import time
 import cv2
+import torchvision.models as models
+from torch.optim import lr_scheduler
 
 class Dataset_(Dataset):
     def __init__(self,csv_path,image_address,transform):
@@ -53,6 +56,36 @@ class Net(nn.Module):
         x = self.fc2(x)
         output = F.log_softmax(x, dim=1)
         return output
+
+def frozon (model):
+    for param in model.parameters():
+        param.requires_grad=False
+    return model
+
+class ResNet18(nn.Module):
+    def __init__(self) -> None:
+        super(ResNet18,self).__init__()
+        modeling=frozon(models.resnet18(pretrained=True))
+        modules=list(modeling.children())[:-2]
+        self.features=nn.Sequential(*modules)
+        self.features[0]=nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+        self.fc=nn.Sequential(
+            nn.Linear(512*8*8,256),
+            nn.PReLU(),
+            nn.Linear(256,256),
+            nn.PReLU(),
+            nn.Linear(256,10)
+        )
+
+    def forward(self,x):
+        output=self.features(x)
+        output=output.reshape(output.shape[0],-1)
+        output=self.fc(output)
+        output = F.log_softmax(output, dim=1)
+        return output
+    
+    def get_emdding(self,x):
+        return self.forward(x)
 
 
 def train(args, model, device, train_loader, optimizer, epoch):
@@ -134,7 +167,7 @@ def main():
     transform=transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize((256,256)),
-        transforms.Normalize((0.01302305,), (0.05548602,))
+        transforms.Normalize((0.03453826,), (0.1040874,))
         ])
     image_address='./Database/'+args.image_format+'/'
     train_csv='./train.csv'
@@ -148,10 +181,20 @@ def main():
     val_loader = torch.utils.data.DataLoader(val_dataset, **test_kwargs)
     test_loader=torch.utils.data.DataLoader(test_dataset, **test_kwargs)
 
-    model = Net().to(device)
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
-
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    #model=Net().to(device)
+    model = ResNet18().to(device)
+    params=[]
+    print ('---------Params-----------')
+    for name,param in model.named_parameters():
+        if param.requires_grad==True:
+            print ('name:',name)
+            params.append(param)
+    print ('--------------------------')
+    #optimizer = optim.Adadelta(params, lr=args.lr)
+    #optimizer=optim.Adadelta(model.parameters(), lr=args.lr)
+    optimizer=optim.Adam(params,lr=args.lr)
+    scheduler=StepLR(optimizer,8,gamma=0.1,last_epoch=-1)
+    #scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
     for epoch in range(1, args.epochs + 1):
         train(args, model, device, train_loader, optimizer, epoch)
         test(model, device, val_loader)

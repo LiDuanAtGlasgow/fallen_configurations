@@ -1,7 +1,5 @@
 #type:ignore
 from __future__ import print_function
-import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 import argparse
 import torch
@@ -12,6 +10,7 @@ from torchvision import transforms
 import pandas as pd
 import os
 import time
+import torchvision.models as models
 
 torch.manual_seed(1)
 
@@ -30,48 +29,96 @@ class Get_Images():
     def __len__(self):
         return len(self.image)
 
+def frozon (model):
+    for param in model.parameters():
+        param.requires_grad=False
+    return model
+
 class KCNet(nn.Module):
-    def __init__(self):
-        super(KCNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(64*126*126, 128)
-        self.fc2 = nn.Linear(128, 5)
+    def __init__(self) -> None:
+        super(KCNet,self).__init__()
+        modeling=frozon(models.resnet18(pretrained=True))
+        modules=list(modeling.children())[:-2]
+        self.features=nn.Sequential(*modules)
+        self.features[0]=nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+        self.fc=nn.Sequential(
+            nn.Linear(512*8*8,256),
+            nn.PReLU(),
+            nn.Linear(256,256),
+            nn.PReLU(),
+            nn.Linear(256,50)
+        )
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = F.log_softmax(x, dim=1)
+    def forward(self,x):
+        output=self.features(x)
+        output=output.reshape(output.shape[0],-1)
+        output=self.fc(output)
+        output = F.log_softmax(output, dim=1)
         return output
+    
+    def get_emdding(self,x):
+        return self.forward(x)
 
-def test(kcnet,data):
+CATEGORIES=['towel','tshirt','shirt','sweater','jean']
+
+def test(kcnet,data,true_label,correct,acc,category,position_index):
     output=kcnet(data)
-    print ('output:',output)
+    #print ('output:',output)
     pred=output.argmax(dim=1,keepdim=True)
-    print('predicted_label:',pred.item())
-    return pred
+    print ('true_postion:',category,position_index)
+    print('predicted_postion:',CATEGORIES[pred.item()//10],pred.item()%10)
+    if true_label==pred.item():
+        correct+=1
+    acc+=1
+    return pred,acc,correct
 
-images_add='./test_images/pos_test_0001/depth/0001.png'
-images=cv2.imread(images_add,0)
-transform=transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Resize((256,256)),
-        transforms.Normalize((0.01183898,), (0.05419697,))
-        ])
-data=Get_Images(image=images,transforms=transform).__getitem__()
 kcnet=KCNet()
-kcnet.load_state_dict(torch.load('./Model/KCNet.pt'))
+kcnet.load_state_dict(torch.load('./Model/KCNet_test.pt'))
 kcnet.eval()
-pred=test(kcnet,data)
+
+category='shirt'
+num_positions=1
+position_index=0
+num_frames=1
+
+acc=0
+correct=0
+for position in range(num_positions):
+        for frame in range (num_frames):
+            if category=='towel':
+                category_index=0
+            elif category=='tshirt':
+                category_index=1
+            elif category=='shirt':
+                category_index=2
+            elif category=='sweater':
+                category_index=3
+            elif category=='jean':
+                category_index=4
+            else:
+                print ('category',category,'does not exit, quit...')
+                break
+            if num_positions==1:
+                images_add='./test_images/'+category+'/pos_'+str(position_index+1).zfill(4)+'/'+str(frame+1).zfill(4)+'.png'
+                true_label=category_index*10+position_index
+            else:
+                images_add='./test_images/'+category+'/pos_'+str(position+1).zfill(4)+'/'+str(frame+1).zfill(4)+'.png'
+                true_label=category_index*10+position
+            images=cv2.imread(images_add,0)
+            transform=transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize((256,256)),
+                transforms.Normalize((0.03453826,), (0.1040874,))
+            ])
+            data=Get_Images(image=images,transforms=transform).__getitem__()
+            pred,acc,correct=test(kcnet,data,true_label,correct,acc,category,position_index)
+accuracy=100*(correct/acc)
+if num_positions !=1:
+    print ('[category]',category,'[accuracy]',accuracy,'%')
+else:
+    if accuracy==0:
+        print ('Known Configuration Recognition Is  Failed!')
+    else:
+        print ('Known Configuration Recognition Is Successful!')
+print ('complete!')
 
