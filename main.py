@@ -233,8 +233,8 @@ def main():
         test_loader=torch.utils.data.DataLoader(test_dataset, **test_kwargs)
 
         model = ResNet18().to(device)
-        model.load_state_dict(torch.load('./Model/'+args.image_format+'/'+str(index+1)+'/KCNet_'+args.image_format+'_'+str(index+1)+'.pt'))
-        model.eval()
+        #model.load_state_dict(torch.load('./Model/'+args.image_format+'/'+str(index+1)+'/KCNet_'+args.image_format+'_'+str(index+1)+'.pt'))
+        #model.eval()
         params=[]
         print ('\n ----------------Params---------------------------')
         for name,param in model.named_parameters():
@@ -247,10 +247,11 @@ def main():
         optimizer=optim.Adam(params,lr=args.lr)
         scheduler=StepLR(optimizer,8,gamma=0.1,last_epoch=-1)
         #scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
-        #for epoch in range(1, args.epochs + 1):
-        #    train(args, model, device, train_loader, optimizer, epoch,index)
-        #    test(model, device, val_loader,index)
-        #    scheduler.step()
+        for epoch in range(1, args.epochs + 1):
+            train(args, model, device, train_loader, optimizer, epoch,index)
+            test(model, device, val_loader,index)
+            scheduler.step()
+
 
         test(model,device=device,test_loader=test_loader,k=index,image_format=args.image_format)
     
