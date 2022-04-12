@@ -32,7 +32,7 @@ transform=transforms.Compose([
     transforms.ToTensor()
 ])
 batch_size=100
-dataset=ImageDataset('./labels.csv','./Database/depth/',transform=transform)
+dataset=ImageDataset('./labels.csv','./Database/rgb/',transform=transform)
 sampler=SequentialSampler(list(range(len(dataset))))
 kwargs={'num_workers':4,'pin_memory':True} if cuda else {}
 dataloader=DataLoader(dataset=dataset,batch_size=batch_size,sampler=sampler,**kwargs)

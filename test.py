@@ -14,6 +14,10 @@ import torchvision.models as models
 
 torch.manual_seed(1)
 
+parser = argparse.ArgumentParser(description='Known Configurations Project')
+parser.add_argument('--model_no',type=int,default=100,help='model number')
+args = parser.parse_args()
+
 class Get_Images():
     def __init__(self,image,transforms=None):
         self.image=image
@@ -72,13 +76,18 @@ def test(kcnet,data,true_label,correct,acc,category,position_index):
     acc+=1
     return pred,acc,correct
 
+if args.model_no==100:
+    print ('You must assign a model number! quitting...')
+    exit()
 kcnet=KCNet()
-kcnet.load_state_dict(torch.load('./Model/KCNet_test.pt'))
+kcnet.load_state_dict(torch.load('./Model/depth/'+str(args.model_no)+'/KCNet_depth_'+str(args.model_no)+'.pt'))
 kcnet.eval()
 
-category='shirt'
+normalises=[0.02428423,0.02427759,0.02369768,0.02448228]
+stds=[0.0821249,0.08221505,0.08038522,0.0825848]
+category='tshirt'
 num_positions=1
-position_index=0
+position_index=2
 num_frames=1
 
 acc=0
@@ -104,14 +113,18 @@ for position in range(num_positions):
             else:
                 images_add='./test_images/'+category+'/pos_'+str(position+1).zfill(4)+'/'+str(frame+1).zfill(4)+'.png'
                 true_label=category_index*10+position
+            #print ('image_add',images_add)
             images=cv2.imread(images_add,0)
             transform=transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Resize((256,256)),
-                transforms.Normalize((0.03453826,), (0.1040874,))
+                transforms.Normalize((normalises[args.model_no-1],), (stds[args.model_no-1],))
             ])
             data=Get_Images(image=images,transforms=transform).__getitem__()
-            pred,acc,correct=test(kcnet,data,true_label,correct,acc,category,position_index)
+            if num_positions==1:
+                pred,acc,correct=test(kcnet,data,true_label,correct,acc,category,position_index)
+            else:
+                pred,acc,correct=test(kcnet,data,true_label,correct,acc,category,position)
 accuracy=100*(correct/acc)
 if num_positions !=1:
     print ('[category]',category,'[accuracy]',accuracy,'%')
