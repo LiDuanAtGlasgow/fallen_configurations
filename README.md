@@ -11,7 +11,7 @@ Robotic deformable-object manipulation is a challenge in the robotic industry be
 -----------------------------------------------------------------------------------------------
 ## Downloads
 <img src="images/Page_Design_Paper.png" width="50" height="50"><img src="images/Page_Design_Code.png" width="50" height="50"><img src="images/Page_Design_Database.png" width="50" height="50">\
- [<a taget="_blank" title="Paper" href="https://www.overleaf.com/read/zhjhhfgvvhnw">Paper</a>][<a taget="_blank" title="Code" href="https://github.com/LiDuanAtGlasgow/known_configurations">Code</a>][<a taget="_blank" title="Database" href=""https://gla-my.sharepoint.com/:u:/g/personal/2168518d_student_gla_ac_uk/EYzzjcNlfS1Gsp772qxqqHgBhSWW59DyeQeN5tJ252Dpsg?e=frlymY">Database</a>]
+ [<a taget="_blank" title="Paper" href="https://www.overleaf.com/read/zhjhhfgvvhnw">Paper</a>][<a taget="_blank" title="Code" href="https://github.com/LiDuanAtGlasgow/known_configurations">Code</a>][<a taget="_blank" title="Database" href="https://gla-my.sharepoint.com/:u:/g/personal/2168518d_student_gla_ac_uk/EYzzjcNlfS1Gsp772qxqqHgBhSWW59DyeQeN5tJ252Dpsg?e=frlymY">Database</a>]
 
  
 
