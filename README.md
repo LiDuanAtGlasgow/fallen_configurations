@@ -5,8 +5,7 @@ Robotic deformable-object manipulation is a challenge in the robotic industry be
 ## Video Demonstration
 <iframe width="560" height="315" src="https://www.youtube.com/embed/BJl50A1xN08" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
---------------------------------------------------------------------------------------------
-## Examples
+## Examples of 'Known Configurations' Manipulations
 <img src="images/Paper- Manipulation_Demonstration.jpg" width="1200" height="700">
 
 ## Downloads
