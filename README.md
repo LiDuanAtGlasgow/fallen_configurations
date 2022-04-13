@@ -7,7 +7,7 @@ Robotic deformable-object manipulation is a challenge in the robotic industry be
 
 --------------------------------------------------------------------------------------------
 ## Examples
-
+<img src="images/Paper- Manipulation_Demonstration.jpg" width="1200" height="700">
 -----------------------------------------------------------------------------------------------
 ## Downloads
 <img src="images/Page_Design_Paper.png" width="50" height="50"><img src="images/Page_Design_Code.png" width="50" height="50"><img src="images/Page_Design_Database.png" width="50" height="50">\
