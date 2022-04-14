@@ -3,7 +3,7 @@
 Robotic deformable-object manipulation is a challenge in the robotic industry because deformable objects have complicated and various object states. Predicting those object states and updating manipulation routes are time-consuming and computationally costly. In this paper, we propose an effective robotic deformable-object manipulation approach by recognising the ‘known configurations’ of the garments with a 'known configuration network' (KCNet) and choosing pre-designed manipulation routes based on the recognised ‘known configurations’. Our manipulation routes feature a four-action strategy: finding two critical grasping points, stretching the garments, and lifting down the garments. We demonstrate that our approach is 65% faster than state-of-art(SOA) and enables manipulating garments with various shapes.
 
 ## Video Demonstration
-<iframe width="560" height="315" src="https://www.youtube.com/embed/BJl50A1xN08" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8uf-A_A7m6Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Examples of 'Known Configurations' Manipulations
 <img src="images/Paper- Manipulation_Demonstration.jpg" width="1200" height="700">
