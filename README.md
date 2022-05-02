@@ -1,4 +1,4 @@
-# Known Configurations: An Effective Data-Driven Four-Action-Strategy Robotic Manipulation Approach for Deformable Object Flattening
+# Recognising Known Configurations of Garments For Dual-Arm Robotic Flattening
 ## Abstract
 Robotic deformable-object manipulation is a challenge in the robotic industry because deformable objects have complicated and various object states. Predicting those object states and updating manipulation planning are time-consuming and computationally expensive. In this paper, we propose an effective robotic manipulation approach for recognising ‘known configurations’ of garments with a 'Known Configuration neural Network' (KCNet) and choosing pre-designed manipulation plans based on the recognised known configurations. Our robotic manipulation plan features a four-action strategy: finding two critical grasping points, stretching the garments, and lifting down the garments. We demonstrate that our approach only needs 98 seconds on average to flatten garments of five categories.
 
