@@ -1,12 +1,9 @@
 # Recognising Known Configurations of Garments For Dual-Arm Robotic Flattening
 ## Abstract
-Robotic deformable-object manipulation is a challenge in the robotic industry because deformable objects have complicated and various object states. Predicting those object states and updating manipulation planning are time-consuming and computationally expensive. In this paper, we propose an effective robotic manipulation approach for recognising ‘known configurations’ of garments with a 'Known Configuration neural Network' (KCNet) and choosing pre-designed manipulation plans based on the recognised known configurations. Our robotic manipulation plan features a four-action strategy: finding two critical grasping points, stretching the garments, and lifting down the garments. We demonstrate that our approach only needs 98 seconds on average to flatten garments of five categories.
+Robotic deformable-object manipulation is a challenge in the robotic industry because deformable objects have complicated and various object states. Predicting those object states and updating manipulation planning is time-consuming and computationally expensive. In this paper, we propose learning known configurations of garments with a 'Known Configuration neural Network' (KCNet), which fundamentals an effective robotic garment flattening paradigm where a robot chose a pre-designed manipulation plan based on the recognised known configuration.
 
-## Video Demonstration
-<iframe width="560" height="315" src="https://www.youtube.com/embed/8uf-A_A7m6Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-## Examples of 'Known Configurations' Manipulations
-<img src="images/Paper- Manipulation_Demonstration.jpg" width="1200" height="700">
+## An Example of Robotic Garment Flattening based on Garment Known Configurations
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jg6YbeLHrPE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Downloads
 <img src="images/Page_Design_Paper.png" width="50" height="50"><img src="images/Page_Design_Code.png" width="50" height="50"><img src="images/Page_Design_Database.png" width="50" height="50">\
